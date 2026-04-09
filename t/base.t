@@ -8,7 +8,7 @@
 use Test;
 use strict;
 $|++;
-BEGIN { plan tests => 42 };
+BEGIN { plan tests => 46 };
 use Net::CIDR::Lite;
 ok(1); # If we made it this far, we are ok.
 
@@ -144,3 +144,11 @@ ok($@=~/Can't determine ip format/);
 
 eval { $err_octal->add("10.01.0.0/8") };
 ok($@=~/Can't determine ip format/);
+
+
+# CVE-2026-40198: Reject IPv6 addresses with too few groups
+foreach my $malformed_ipv6 ("abcd/32", "1:2:3/48", "1:2:3:4:5:6:7/112", "") {
+  eval { Net::CIDR::Lite->new($malformed_ipv6) };
+  ok($@=~/Can't determine ip format/);
+}
+
