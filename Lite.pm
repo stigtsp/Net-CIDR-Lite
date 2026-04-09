@@ -208,7 +208,7 @@ sub _pack_ipv6 {
     return if $ipv4 and @nums > 6;
     return unless $empty or @nums == ($ipv4 ? 6 : 8);
     $str =~ s/X/"0" x (($ipv4 ? 25 : 33)-length($str))/e if $empty;
-    pack("H*", "00" . $str).$ipv4;
+    pack("H*", "00" . $str).substr($ipv4, 1);
 }
 
 sub _unpack_ipv6 {
