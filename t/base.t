@@ -8,7 +8,7 @@
 use Test;
 use strict;
 $|++;
-BEGIN { plan tests => 62 };
+BEGIN { plan tests => 66 };
 use Net::CIDR::Lite;
 ok(1); # If we made it this far, we are ok.
 
@@ -179,5 +179,13 @@ ok(! defined Net::CIDR::Lite::_pack_ipv6("\x{ff10}1::1"));
 ok(! defined Net::CIDR::Lite::_pack_ipv6("\x{0966}1::1"));
 ok(! defined Net::CIDR::Lite::_pack_ipv6(chr(0x1D7CF) . "::1"));
 eval { Net::CIDR::Lite->new("1.2.3.4/1\x{ff10}") };
+ok($@=~/Bad mask/);
+
+# CVE-2026-45191: Reject zero-padded CIDR masks
+foreach my $padded ("00", "01", "032") {
+    eval { Net::CIDR::Lite->new("1.2.3.4/$padded") };
+    ok($@=~/Bad mask/);
+}
+eval { Net::CIDR::Lite->new("::/00") };
 ok($@=~/Bad mask/);
 
