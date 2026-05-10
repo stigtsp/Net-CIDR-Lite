@@ -37,7 +37,9 @@ sub add {
     my ($ip, $mask) = split "/", shift;
     $self->_init($ip) || confess "Can't determine ip format" unless %$self;
     confess "Bad mask $mask"
-        unless $mask =~ /\A[0-9]+\z/ and $mask <= $self->{NBITS}-8;
+        unless defined $mask
+        and $mask =~ /\A(?:0|[1-9][0-9]*)\z/
+        and $mask <= $self->{NBITS}-8;
     $mask += 8;
     my $start = $self->{PACK}->($ip) & $self->{MASKS}[$mask]
         or confess "Bad ip address: $ip";
