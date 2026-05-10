@@ -4,7 +4,7 @@ use strict;
 use vars qw($VERSION);
 use Carp qw(confess);
 
-$VERSION = '0.23';
+$VERSION = '0.24';
 
 my %masks;
 my @fields = qw(PACK UNPACK NBITS MASKS);
