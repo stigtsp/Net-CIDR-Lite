@@ -8,18 +8,25 @@ on:
       - '*'
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   perl:
 
     runs-on: macOS-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Set up Perl
-        run: brew install perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: latest
       - name: perl -V
         run: perl -V
       # - name: Install Dependencies
       #   run: curl -sL https://git.io/cpm | perl - install -g --show-build-log-on-failure
       - name: Run Tests
-        run: perl Makefile.PL; make disttest
+        run: |
+          perl Makefile.PL
+          perl -MConfig -e 'system($Config::Config{make}, "disttest") == 0 or die "disttest failed\n"'
